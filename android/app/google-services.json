@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "273074186251",
+    "project_id": "stockify-5de99",
+    "storage_bucket": "stockify-5de99.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:273074186251:android:79ac9bdbb3a184b6b07f0e",
+        "android_client_info": {
+          "package_name": "com.example.stockify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "273074186251-3e5msrkci099reugd3soqlphh7jonq0h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.stockify",
+            "certificate_hash": "93d0dc997a6fb8f96945bdf31acf2b43b0130f0e"
+          }
+        },
+        {
+          "client_id": "273074186251-u7bvrc6i2o0kt2s1r2j32s5lhbshomkn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCv4TxViDr55hvv770yKX0qzFkRD8AJrD4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "273074186251-u7bvrc6i2o0kt2s1r2j32s5lhbshomkn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
