@@ -1,23 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
-class LoginField extends StatelessWidget {
+class LoginField extends StatefulWidget {
   final String text;
   final bool hidden;
+  final TextEditingController controller;
 
-  LoginField({required this.text, required this.hidden});
+  LoginField(
+      {required this.text, required this.hidden, required this.controller});
 
-  final errorSnackBar = SnackBar(
-    content: Text(
-      'Field cannot be empty!',
-      textAlign: TextAlign.center,
-    ),
-    duration: Duration(milliseconds: 700),
-  );
+  @override
+  LoginState createState() =>
+      LoginState(text: text, hidden: hidden, controller: controller);
+}
+
+class LoginState extends State<LoginField> {
+  final String text;
+  final bool hidden;
+  final TextEditingController controller;
+
+  LoginState(
+      {required this.text, required this.hidden, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      controller: controller,
       cursorColor: Colors.white, //change with model
       obscureText: hidden,
       autocorrect: false,
@@ -34,9 +43,15 @@ class LoginField extends StatelessWidget {
           borderSide: BorderSide(color: Colors.white),
         ),
       ),
-      onSubmitted: (text) => text.isEmpty
-          ? ScaffoldMessenger.of(context).showSnackBar(errorSnackBar)
-          : null,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Field(s) can't be empty!!";
+        }
+        if ([" "].contains(value)) {
+          return "No spaces allowed!";
+        }
+        return null;
+      },
     );
   }
 }

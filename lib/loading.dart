@@ -7,19 +7,20 @@ class Loading extends StatelessWidget {
 
   Loading(this.snapshot);
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         body: Container(
+          color: Colors.black,
           child: Center(
-            child: SpinKitFadingCircle(
+            child: SpinKitDualRing(
               color: Colors.blueAccent,
               duration: Duration(seconds: 20),
             ),
           ),
         ),
-      )
+      ),
     );
   }
 }

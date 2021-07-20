@@ -13,6 +13,16 @@ import '../backend/auth.dart';
 const String mobileLoginSvgPath = 'lib/assets/svg/mobile_login.svg';
 const String desktopLoginSvgPath = 'lib/assets/svg/desktop_login.svg';
 
+SnackBar errorSnackBar({required String text}) {
+  return SnackBar(
+    content: Text(
+      text,
+      textAlign: TextAlign.center,
+    ),
+    duration: Duration(milliseconds: 1000),
+  );
+}
+
 class LoginRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -144,9 +154,92 @@ class WelcomeContainer extends StatelessWidget {
   }
 }
 
-class FieldContainer extends StatelessWidget {
+class FieldContainer extends StatefulWidget {
+  @override
+  FieldContainerState createState() => FieldContainerState();
+}
+
+class FieldContainerState extends State<FieldContainer> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmController = TextEditingController();
+
+  final RegExp regExp = RegExp("\\.com|@");
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    Future loginConstraint() async {
+      if (emailController.text.isNotEmpty &&
+          passwordController.text.isNotEmpty) {
+        if (emailController.text.contains(regExp)) {
+          if (await Auth(
+                  email: emailController.text,
+                  password: passwordController.text)
+              .signIn()) {
+            Navigator.of(context).popAndPushNamed('/content');
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
+              text: "Username/password incorrectly entered!",
+            ));
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
+            text: "Enter a valid email address!",
+          ));
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
+          text: "Field(s) cannot be empty!",
+        ));
+      }
+    }
+
+    Future signUpConstraint() async {
+      if (emailController.text.isNotEmpty &&
+          passwordController.text.isNotEmpty &&
+          confirmController.text.isNotEmpty) {
+        if (emailController.text.contains(regExp)) {
+          if (passwordController.text == confirmController.text) {
+            if (await Auth(
+                    email: emailController.text,
+                    password: passwordController.text)
+                .signUp()) {
+              Navigator.of(context).popAndPushNamed('/content');
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
+                text: "Username/password incorrectly entered!",
+              ));
+            }
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
+              text: "Passwords don't match!",
+            ));
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
+            text: "Enter a valid email address!",
+          ));
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
+          text: "Field(s) cannot be empty!",
+        ));
+      }
+    }
+
     return Consumer<LoginSignupModel>(builder: (builder, model, child) {
       return Container(
           child: Padding(
@@ -158,21 +251,48 @@ class FieldContainer extends StatelessWidget {
               Spacer(
                 flex: 10,
               ),
-              LoginField(text: 'Username', hidden: false),
+              LoginField(
+                text: 'Username',
+                hidden: false,
+                controller: emailController,
+              ),
               Spacer(),
-              LoginField(text: 'Password', hidden: true),
+              LoginField(
+                text: 'Password',
+                hidden: true,
+                controller: passwordController,
+              ),
               Spacer(),
               Visibility(
                   visible: model.model ? false : true,
-                  child: LoginField(text: 'Confirm password', hidden: true)),
+                  child: LoginField(
+                    text: 'Confirm password',
+                    hidden: true,
+                    controller: confirmController,
+                  )),
               Spacer(
                 flex: 5,
               ),
               LoginButton(
-                  model.model ? 'Login' : 'Sign Up',
-                  model.model
-                      ? () => Navigator.of(context).pushNamed('/content')
-                      : () => Navigator.of(context).pushNamed('/content')),
+                text: model.model ? 'Login' : 'Sign Up',
+                func: model.model
+                    ? () => FutureBuilder(
+                        future: loginConstraint(),
+                        builder: (context, snapshot) {
+                          return CircularProgressIndicator(
+                            backgroundColor: Colors.transparent,
+                            value: 50.0,
+                          );
+                        })
+                    : () => FutureBuilder(
+                        future: signUpConstraint(),
+                        builder: (context, snapshot) {
+                          return CircularProgressIndicator(
+                            backgroundColor: Colors.transparent,
+                            value: 50.0,
+                          );
+                        }),
+              ),
               Spacer(
                 flex: 7,
               )

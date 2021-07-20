@@ -4,7 +4,7 @@ class LoginButton extends StatelessWidget {
   final String text;
   final Function func;
 
-  LoginButton(this.text, this.func);
+  LoginButton({required this.text, required this.func});
 
   @override
   Widget build(BuildContext context) {

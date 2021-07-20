@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:stockify/error.dart';
 import 'package:stockify/loading.dart';
 import 'package:stockify/models/login_signup.dart';
@@ -10,8 +12,8 @@ import 'package:stockify/models/theme.dart';
 import 'routes/login.dart';
 import 'routes/content.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+Future main() async {
+  await dotenv.load(fileName: 'lib/.env');
   runApp(MyApp());
 }
 
@@ -21,8 +23,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _AppState extends State<MyApp> {
-  final Future<FirebaseApp> _init = Firebase.initializeApp();
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -33,7 +33,7 @@ class _AppState extends State<MyApp> {
         ],
         child: Consumer<ThemeModel>(builder: (builder, model, child) {
           return FutureBuilder(
-              future: _init,
+              future: Connectivity().checkConnectivity(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);

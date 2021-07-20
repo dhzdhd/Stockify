@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LoginSignupModel extends ChangeNotifier {
-  var model = true;
+  bool model = true;
 
   void toLogin() {
     model = true;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:stockify/backend/auth.dart';
 import 'package:stockify/models/nav_bar.dart';
 
 import 'pages/home.dart';
@@ -70,7 +71,7 @@ class _MobileContentRoute extends StatelessWidget {
         bottomNavigationBar: CurvedNavigationBar(
           animationDuration: Duration(milliseconds: 300),
           height: 55,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           color: Color.fromARGB(155, 23, 103, 117),
           items: [
             Icon(Icons.home_outlined),
@@ -97,7 +98,11 @@ class _MobileContentRoute extends StatelessWidget {
                           Icons.arrow_back_sharp,
                           size: 30,
                         ),
-                        onPressed: () => Navigator.of(context).pushNamed('/'),
+                        onPressed: () async {
+                          await Auth.signOut()
+                              ? Navigator.of(context).popAndPushNamed('/')
+                              : null;
+                        },
                       ),
                     ),
                   ),
