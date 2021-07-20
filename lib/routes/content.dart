@@ -71,7 +71,7 @@ class _MobileContentRoute extends StatelessWidget {
         bottomNavigationBar: CurvedNavigationBar(
           animationDuration: Duration(milliseconds: 300),
           height: 55,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           color: Color.fromARGB(155, 23, 103, 117),
           items: [
             Icon(Icons.home_outlined),
@@ -99,6 +99,7 @@ class _MobileContentRoute extends StatelessWidget {
                           size: 30,
                         ),
                         onPressed: () async {
+                          model.changePage(0);
                           await Auth.signOut()
                               ? Navigator.of(context).popAndPushNamed('/')
                               : null;

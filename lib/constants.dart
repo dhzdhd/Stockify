@@ -1,7 +1,8 @@
 import 'package:stockify/backend/auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase/supabase.dart';
 
-Object? user;
+User? user;
 Auth? authInstance;
 
 final String supabaseUrl = dotenv.env['SUPABASE_URL'] as String;

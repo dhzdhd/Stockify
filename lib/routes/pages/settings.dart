@@ -9,6 +9,8 @@ class SettingsPage extends StatelessWidget {
     color: Colors.black,
   );
 
+  final textStyle = TextStyle(color: Colors.black);
+
   SettingsPage();
 
   @override
@@ -18,11 +20,24 @@ class SettingsPage extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            title: Text(
-              'Profile',
-              style: titleTextStyle,
+            title: Padding(
+              padding: EdgeInsets.only(bottom: 15),
+              child: Text(
+                'Profile',
+                style: titleTextStyle,
+              ),
             ),
-            children: [],
+            children: [
+              ListTile(
+                title: Text('Username', style: textStyle),
+                subtitle: Text(
+                  'eee',
+                  style: textStyle,
+                ),
+              ),
+              Divider(),
+              ListTile(),
+            ],
           );
         },
       );

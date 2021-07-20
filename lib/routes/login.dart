@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/rendering.dart';
@@ -181,6 +182,38 @@ class FieldContainerState extends State<FieldContainer> {
 
   @override
   Widget build(BuildContext context) {
+    void emailDialog() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text(
+              'Email Signup',
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            ),
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                child: Text(
+                  'Check your email to confirm the sign up. Warning! you cannot login again if you do not confirm your email!',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).popAndPushNamed('/content');
+                  },
+                  child: Text('Understood!'),
+                ),
+              )
+            ],
+          );
+        },
+      );
+    }
+
     Future loginConstraint() async {
       if (emailController.text.isNotEmpty &&
           passwordController.text.isNotEmpty) {
@@ -217,10 +250,10 @@ class FieldContainerState extends State<FieldContainer> {
                     email: emailController.text,
                     password: passwordController.text)
                 .signUp()) {
-              Navigator.of(context).popAndPushNamed('/content');
+              emailDialog();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
-                text: "Username/password incorrectly entered!",
+                text: "User already signed up!",
               ));
             }
           } else {
@@ -276,22 +309,13 @@ class FieldContainerState extends State<FieldContainer> {
               LoginButton(
                 text: model.model ? 'Login' : 'Sign Up',
                 func: model.model
-                    ? () => FutureBuilder(
-                        future: loginConstraint(),
-                        builder: (context, snapshot) {
-                          return CircularProgressIndicator(
-                            backgroundColor: Colors.transparent,
-                            value: 50.0,
-                          );
-                        })
-                    : () => FutureBuilder(
-                        future: signUpConstraint(),
-                        builder: (context, snapshot) {
-                          return CircularProgressIndicator(
-                            backgroundColor: Colors.transparent,
-                            value: 50.0,
-                          );
-                        }),
+                    ? () async {
+                        await loginConstraint();
+                        // Navigator.of(context).popAndPushNamed('/content');
+                      }
+                    : () async {
+                        await signUpConstraint();
+                      },
               ),
               Spacer(
                 flex: 7,

@@ -14,7 +14,7 @@ class Auth {
   Future<bool> signUp() async {
     final response = await supabaseClient.auth.signUp(email, password);
     if (response.error != null) {
-      print(response.error.toString());
+      print(response.error?.message);
       return false;
     } else {
       final user = response.user;
@@ -27,7 +27,7 @@ class Auth {
     final response =
         await supabaseClient.auth.signIn(email: email, password: password);
     if (response.error != null) {
-      print(response.error.toString());
+      print(response.error?.message);
       return false;
     } else {
       final user = response.user;
@@ -42,6 +42,7 @@ class Auth {
       print(response.error.toString());
       return false;
     } else {
+      constants.user = null;
       return true;
     }
   }
