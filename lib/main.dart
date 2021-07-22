@@ -1,12 +1,13 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:stockify/backend/login_data.dart';
 import 'package:stockify/error.dart';
 import 'package:stockify/loading.dart';
 import 'package:stockify/models/login_signup.dart';
 import 'package:stockify/models/nav_bar.dart';
+import 'package:stockify/models/profile.dart';
 import 'package:stockify/models/theme.dart';
 
 import 'routes/login.dart';
@@ -29,11 +30,15 @@ class _AppState extends State<MyApp> {
         providers: [
           ChangeNotifierProvider(create: (context) => LoginSignupModel()),
           ChangeNotifierProvider(create: (context) => ThemeModel()),
-          ChangeNotifierProvider(create: (context) => NavBarModel())
+          ChangeNotifierProvider(create: (context) => NavBarModel()),
+          ChangeNotifierProvider(create: (context) => ProfileModel()),
         ],
         child: Consumer<ThemeModel>(builder: (builder, model, child) {
           return FutureBuilder(
-              future: Connectivity().checkConnectivity(),
+              future: Future.wait([
+                Connectivity().checkConnectivity(),
+                LoginData().fetchData()
+              ]),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   print(snapshot.error);

@@ -5,7 +5,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:stockify/backend/login_data.dart';
 import 'package:stockify/models/login_signup.dart';
+import 'package:stockify/models/profile.dart';
 import 'package:stockify/widgets/login_button.dart';
 
 import '../widgets/login_field.dart';
@@ -13,6 +15,8 @@ import '../backend/auth.dart';
 
 const String mobileLoginSvgPath = 'lib/assets/svg/mobile_login.svg';
 const String desktopLoginSvgPath = 'lib/assets/svg/desktop_login.svg';
+
+enum PopupOptions { forgotPassword }
 
 SnackBar errorSnackBar({required String text}) {
   return SnackBar(
@@ -53,9 +57,9 @@ class MobileLoginScreen extends StatelessWidget {
           decoration: BoxDecoration(color: Colors.transparent),
           child: Column(
             children: [
-              Flexible(flex: 2, child: SafeArea(child: WelcomeContainer())),
-              Flexible(flex: 4, child: FieldContainer()),
-              Flexible(flex: 1, child: SignUpContainer()),
+              Flexible(flex: 4, child: SafeArea(child: WelcomeContainer())),
+              Flexible(flex: 6, child: FieldContainer()),
+              Flexible(flex: 2, child: SignUpContainer()),
             ],
           ),
         ),
@@ -220,8 +224,17 @@ class FieldContainerState extends State<FieldContainer> {
         if (emailController.text.contains(regExp)) {
           if (await Auth(
                   email: emailController.text,
-                  password: passwordController.text)
+                  password: passwordController.text,
+                  context: context)
               .signIn()) {
+            if (LoginSignupModel().switchValue == true) {
+              if (!await LoginData().storeData(
+                  email: emailController.text,
+                  password: passwordController.text)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    errorSnackBar(text: "Data could not be stored locally"));
+              }
+            }
             Navigator.of(context).popAndPushNamed('/content');
           } else {
             ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
@@ -248,8 +261,17 @@ class FieldContainerState extends State<FieldContainer> {
           if (passwordController.text == confirmController.text) {
             if (await Auth(
                     email: emailController.text,
-                    password: passwordController.text)
+                    password: passwordController.text,
+                    context: context)
                 .signUp()) {
+              if (LoginSignupModel().switchValue == true) {
+                if (!await LoginData().storeData(
+                    email: emailController.text,
+                    password: passwordController.text)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      errorSnackBar(text: "Data could not be stored locally"));
+                }
+              }
               emailDialog();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
@@ -275,55 +297,103 @@ class FieldContainerState extends State<FieldContainer> {
 
     return Consumer<LoginSignupModel>(builder: (builder, model, child) {
       return Container(
-          child: Padding(
-        padding: EdgeInsets.only(left: 10, right: 10),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Spacer(
-                flex: 10,
-              ),
-              LoginField(
-                text: 'Username',
-                hidden: false,
-                controller: emailController,
-              ),
-              Spacer(),
-              LoginField(
-                text: 'Password',
-                hidden: true,
-                controller: passwordController,
-              ),
-              Spacer(),
-              Visibility(
-                  visible: model.model ? false : true,
-                  child: LoginField(
-                    text: 'Confirm password',
+        child: Padding(
+          padding: EdgeInsets.only(left: 10, right: 10),
+          child: Center(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Spacer(
+                    flex: 10,
+                  ),
+                  LoginField(
+                    text: 'Username',
+                    hidden: false,
+                    controller: emailController,
+                  ),
+                  Spacer(),
+                  LoginField(
+                    text: 'Password',
                     hidden: true,
-                    controller: confirmController,
-                  )),
-              Spacer(
-                flex: 5,
-              ),
-              LoginButton(
-                text: model.model ? 'Login' : 'Sign Up',
-                func: model.model
-                    ? () async {
-                        await loginConstraint();
-                        // Navigator.of(context).popAndPushNamed('/content');
-                      }
-                    : () async {
-                        await signUpConstraint();
-                      },
-              ),
-              Spacer(
-                flex: 7,
-              )
-            ],
+                    controller: passwordController,
+                  ),
+                  Spacer(),
+                  Visibility(
+                      visible: model.model ? false : true,
+                      child: LoginField(
+                        text: 'Confirm password',
+                        hidden: true,
+                        controller: confirmController,
+                      )),
+                  Spacer(
+                    flex: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      LoginButton(
+                        text: model.model ? 'Login' : 'Sign Up',
+                        func: model.model
+                            ? () async {
+                                await loginConstraint();
+                                // Navigator.of(context).popAndPushNamed('/content');
+                              }
+                            : () async {
+                                await signUpConstraint();
+                              },
+                      ),
+                      PopupMenuButton<PopupOptions>(
+                        tooltip: 'Options',
+                        onCanceled: null,
+                        onSelected: (PopupOptions result) {
+                          if (result == PopupOptions.forgotPassword) {
+                            print('e');
+                          }
+                        },
+                        color: Color.fromARGB(255, 51, 166, 175),
+                        itemBuilder: (BuildContext context) => [
+                          PopupMenuItem(
+                            child: Consumer<LoginSignupModel>(
+                              builder: (context, model, child) {
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('Remember info'),
+                                    Switch(
+                                      activeColor:
+                                          Color.fromARGB(255, 9, 59, 72),
+                                      value: model.switchValue,
+                                      onChanged: (foo) {
+                                        model.changeSwitchValue(foo);
+                                      },
+                                    )
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: PopupOptions.forgotPassword,
+                            child: Consumer<LoginSignupModel>(
+                              builder: (context, model, child) {
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [Text('Forgot password?')],
+                                );
+                              },
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                  Spacer(
+                    flex: 7,
+                  )
+                ]),
           ),
         ),
-      ));
+      );
     });
   }
 }
@@ -331,18 +401,37 @@ class FieldContainerState extends State<FieldContainer> {
 class SignUpContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(child: Center(
-      child: Consumer<LoginSignupModel>(builder: (builder, model, child) {
-        return TextButton(
-          child: Text(
-            model.model
-                ? 'Not signed in? Sign up here \u2794'
-                : 'Already signed in? Login here \u2794',
-            style: TextStyle(color: Colors.white, fontSize: 15),
-          ),
-          onPressed: () => model.model ? model.toSignUp() : model.toLogin(),
-        );
-      }),
-    ));
+    return Container(
+      child: Center(
+        child: Consumer<LoginSignupModel>(builder: (builder, model, child) {
+          // return Column(
+          //   children: [
+          //     Row(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          // Switch(
+          //     activeColor: Color.fromARGB(255, 121, 186, 205),
+          //     value: model.switchValue,
+          //     onChanged: (foo) {
+          //       model.changeSwitchValue(foo);
+          //     }),
+          // Text(
+          //   'Remember login details',
+          //   style: TextStyle(fontSize: 16),
+          // )
+          //       ],
+          //     ),
+          return TextButton(
+            child: Text(
+              model.model
+                  ? 'Not signed in? Sign up here \u2794'
+                  : 'Already signed in? Login here \u2794',
+              style: TextStyle(color: Colors.white, fontSize: 15),
+            ),
+            onPressed: () => model.model ? model.toSignUp() : model.toLogin(),
+          );
+        }),
+      ),
+    );
   }
 }

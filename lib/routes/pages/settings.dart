@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stockify/models/profile.dart';
 
 class SettingsPage extends StatelessWidget {
   final titleTextStyle = TextStyle(
@@ -19,26 +21,48 @@ class SettingsPage extends StatelessWidget {
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Padding(
-              padding: EdgeInsets.only(bottom: 15),
-              child: Text(
-                'Profile',
-                style: titleTextStyle,
-              ),
-            ),
-            children: [
-              ListTile(
-                title: Text('Username', style: textStyle),
-                subtitle: Text(
-                  'eee',
-                  style: textStyle,
+          return Consumer<ProfileModel>(builder: (context, model, child) {
+            return SimpleDialog(
+              title: Padding(
+                padding: EdgeInsets.only(bottom: 15),
+                child: Text(
+                  'Profile',
+                  style: titleTextStyle,
                 ),
               ),
-              Divider(),
-              ListTile(),
-            ],
-          );
+              children: [
+                ListTile(
+                  title: Text('Email: ', style: textStyle),
+                  subtitle: Text(model.profileUser?.email ?? 'Error',
+                      style: textStyle),
+                ),
+                Divider(),
+                ListTile(
+                  title: Text('ID: ', style: textStyle),
+                  subtitle: Text(
+                    model.profileUser?.id ?? 'Error',
+                    style: textStyle,
+                  ),
+                ),
+                Divider(),
+                ListTile(
+                  title: Text('Created on: ', style: textStyle),
+                  subtitle: Text(
+                    model.profileUser?.createdAt.substring(0, 10) ?? 'Error',
+                    style: textStyle,
+                  ),
+                ),
+                Divider(),
+                ListTile(
+                  title: Text('Last signed in on: ', style: textStyle),
+                  subtitle: Text(
+                    model.profileUser?.lastSignInAt?.substring(0, 10) ?? 'None',
+                    style: textStyle,
+                  ),
+                ),
+              ],
+            );
+          });
         },
       );
     }
@@ -77,7 +101,13 @@ class SettingsPage extends StatelessWidget {
               style: titleTextStyle,
             ),
             children: [
-              Text('About developer: \nContact: dhzdhd#2244 on discord')
+              Padding(
+                padding: EdgeInsets.only(right: 10, left: 10),
+                child: Text(
+                  'About developer: \nContact: dhzdhd#2244 on discord',
+                  style: textStyle,
+                ),
+              )
             ],
           );
         },

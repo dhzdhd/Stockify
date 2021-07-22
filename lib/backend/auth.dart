@@ -1,15 +1,18 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:supabase/supabase.dart';
+import 'package:stockify/models/profile.dart';
 import 'package:stockify/constants.dart' as constants;
 
 class Auth {
   String email;
   String password;
+  BuildContext context;
 
   static final supabaseClient =
       SupabaseClient(constants.supabaseUrl, constants.supabaseKey);
 
-  Auth({required this.email, required this.password});
+  Auth({required this.email, required this.password, required this.context});
 
   Future<bool> signUp() async {
     final response = await supabaseClient.auth.signUp(email, password);
@@ -18,7 +21,8 @@ class Auth {
       return false;
     } else {
       final user = response.user;
-      constants.user = user;
+      provider.Provider.of<ProfileModel>(context, listen: false)
+          .update(user: user);
       return true;
     }
   }
@@ -31,7 +35,8 @@ class Auth {
       return false;
     } else {
       final user = response.user;
-      constants.user = user;
+      provider.Provider.of<ProfileModel>(context, listen: false)
+          .update(user: user);
       return true;
     }
   }
@@ -42,7 +47,7 @@ class Auth {
       print(response.error.toString());
       return false;
     } else {
-      constants.user = null;
+      ProfileModel().update(user: null);
       return true;
     }
   }
