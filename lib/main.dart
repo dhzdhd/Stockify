@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:stockify/backend/login_data.dart';
+import 'package:stockify/backend/store.dart';
 import 'package:stockify/error.dart';
 import 'package:stockify/loading.dart';
 import 'package:stockify/models/login_signup.dart';

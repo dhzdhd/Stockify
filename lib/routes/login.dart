@@ -1,11 +1,10 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:stockify/backend/login_data.dart';
+import 'package:stockify/backend/store.dart';
 import 'package:stockify/models/login_signup.dart';
 import 'package:stockify/models/profile.dart';
 import 'package:stockify/widgets/login_button.dart';
@@ -404,23 +403,6 @@ class SignUpContainer extends StatelessWidget {
     return Container(
       child: Center(
         child: Consumer<LoginSignupModel>(builder: (builder, model, child) {
-          // return Column(
-          //   children: [
-          //     Row(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          // Switch(
-          //     activeColor: Color.fromARGB(255, 121, 186, 205),
-          //     value: model.switchValue,
-          //     onChanged: (foo) {
-          //       model.changeSwitchValue(foo);
-          //     }),
-          // Text(
-          //   'Remember login details',
-          //   style: TextStyle(fontSize: 16),
-          // )
-          //       ],
-          //     ),
           return TextButton(
             child: Text(
               model.model

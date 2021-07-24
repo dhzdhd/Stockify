@@ -38,7 +38,7 @@ dependencies:
   flutter_dotenv: ^5.0.0
   connectivity_plus: ^1.0.5
   url_launcher: ^6.0.9
-  sqflite: ^2.0.0+3
+  toml: ^0.11.0
 
 dev_dependencies:
   flutter_test:
@@ -60,7 +60,7 @@ flutter:
     - lib/assets/svg/mobile_login.svg
     - lib/assets/svg/mobile.svg
     - lib/.env
-    - lib/assets/user.db
+    - lib/assets/user.toml
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
