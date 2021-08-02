@@ -43,15 +43,6 @@ class LoginState extends State<LoginField> {
           borderSide: BorderSide(color: Colors.white),
         ),
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return "Field(s) can't be empty!!";
-        }
-        if ([" "].contains(value)) {
-          return "No spaces allowed!";
-        }
-        return null;
-      },
     );
   }
 }
