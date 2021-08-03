@@ -51,4 +51,8 @@ class Auth {
       return true;
     }
   }
+
+  static Future<bool> forgotPassword() async {
+    return true;
+  }
 }

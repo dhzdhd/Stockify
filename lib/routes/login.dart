@@ -164,9 +164,9 @@ class FieldContainer extends StatefulWidget {
 }
 
 class FieldContainerState extends State<FieldContainer> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmController = TextEditingController();
 
   final RegExp regExp = RegExp("\\.com|@");
 
@@ -177,9 +177,9 @@ class FieldContainerState extends State<FieldContainer> {
 
   @override
   void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    confirmController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmController.dispose();
     super.dispose();
   }
 
@@ -218,18 +218,16 @@ class FieldContainerState extends State<FieldContainer> {
     }
 
     Future loginConstraint() async {
-      if (emailController.text.isNotEmpty &&
-          passwordController.text.isNotEmpty) {
-        if (emailController.text.contains(regExp)) {
-          if (await Auth(
-                  email: emailController.text,
-                  password: passwordController.text,
-                  context: context)
+      String email = _emailController.text;
+      String password = _passwordController.text;
+
+      if (email.isNotEmpty && password.isNotEmpty) {
+        if (email.contains(regExp)) {
+          if (await Auth(email: email, password: password, context: context)
               .signIn()) {
             if (LoginSignupModel().switchValue == true) {
-              if (!await LoginData().storeData(
-                  email: emailController.text,
-                  password: passwordController.text)) {
+              if (!await LoginData()
+                  .storeData(email: email, password: password)) {
                 ScaffoldMessenger.of(context).showSnackBar(
                     errorSnackBar(text: "Data could not be stored locally"));
               }
@@ -253,20 +251,18 @@ class FieldContainerState extends State<FieldContainer> {
     }
 
     Future signUpConstraint() async {
-      if (emailController.text.isNotEmpty &&
-          passwordController.text.isNotEmpty &&
-          confirmController.text.isNotEmpty) {
-        if (emailController.text.contains(regExp)) {
-          if (passwordController.text == confirmController.text) {
-            if (await Auth(
-                    email: emailController.text,
-                    password: passwordController.text,
-                    context: context)
+      String email = _emailController.text;
+      String password = _passwordController.text;
+      String confirm = _confirmController.text;
+
+      if (email.isNotEmpty && password.isNotEmpty && confirm.isNotEmpty) {
+        if (email.contains(regExp)) {
+          if (password == confirm) {
+            if (await Auth(email: email, password: password, context: context)
                 .signUp()) {
               if (LoginSignupModel().switchValue == true) {
-                if (!await LoginData().storeData(
-                    email: emailController.text,
-                    password: passwordController.text)) {
+                if (!await LoginData()
+                    .storeData(email: email, password: password)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                       errorSnackBar(text: "Data could not be stored locally"));
                 }
@@ -308,13 +304,13 @@ class FieldContainerState extends State<FieldContainer> {
                   LoginField(
                     text: 'Username',
                     hidden: false,
-                    controller: emailController,
+                    controller: _emailController,
                   ),
                   Spacer(),
                   LoginField(
                     text: 'Password',
                     hidden: true,
-                    controller: passwordController,
+                    controller: _passwordController,
                   ),
                   Spacer(),
                   Visibility(
@@ -322,7 +318,7 @@ class FieldContainerState extends State<FieldContainer> {
                       child: LoginField(
                         text: 'Confirm password',
                         hidden: true,
-                        controller: confirmController,
+                        controller: _confirmController,
                       )),
                   Spacer(
                     flex: 5,
@@ -335,7 +331,6 @@ class FieldContainerState extends State<FieldContainer> {
                         func: model.model
                             ? () async {
                                 await loginConstraint();
-                                // Navigator.of(context).popAndPushNamed('/content');
                               }
                             : () async {
                                 await signUpConstraint();

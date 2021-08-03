@@ -34,7 +34,7 @@ dependencies:
   curved_navigation_bar: ^1.0.1
   flutter_spinkit: "^5.0.0"
   flutter_svg: ^0.22.0
-  supabase: ^0.0.2
+  supabase_flutter: ^0.0.6
   flutter_dotenv: ^5.0.0
   connectivity_plus: ^1.0.5
   url_launcher: ^6.0.9

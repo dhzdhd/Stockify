@@ -3,18 +3,28 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:stockify/backend/store.dart';
+import 'package:stockify/constants.dart';
 import 'package:stockify/error.dart';
 import 'package:stockify/loading.dart';
 import 'package:stockify/models/login_signup.dart';
 import 'package:stockify/models/nav_bar.dart';
 import 'package:stockify/models/profile.dart';
 import 'package:stockify/models/theme.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'routes/login.dart';
 import 'routes/content.dart';
 
 Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: 'lib/.env');
+
+  Supabase.initialize(
+    url: supabaseUrl,
+    anonKey: supabaseKey,
+    authCallbackUrlHostname: 'login-callback',
+  );
+
   runApp(MyApp());
 }
 
