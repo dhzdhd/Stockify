@@ -52,7 +52,8 @@ class Auth {
     }
   }
 
-  static Future<bool> forgotPassword() async {
+  static Future<bool> forgotPassword(String password) async {
+    await supabaseClient.auth.update(UserAttributes(password: password));
     return true;
   }
 }

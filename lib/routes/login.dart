@@ -341,7 +341,8 @@ class FieldContainerState extends State<FieldContainer> {
                         onCanceled: null,
                         onSelected: (PopupOptions result) {
                           if (result == PopupOptions.forgotPassword) {
-                            print('e');
+                            Navigator.popAndPushNamed(
+                                context, '/forgotPassword');
                           }
                         },
                         color: Color.fromARGB(255, 51, 166, 175),

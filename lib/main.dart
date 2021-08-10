@@ -10,6 +10,7 @@ import 'package:stockify/models/login_signup.dart';
 import 'package:stockify/models/nav_bar.dart';
 import 'package:stockify/models/profile.dart';
 import 'package:stockify/models/theme.dart';
+import 'package:stockify/routes/forgot_password.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'routes/login.dart';
@@ -63,7 +64,8 @@ class _AppState extends State<MyApp> {
                       initialRoute: '/',
                       routes: <String, Widget Function(BuildContext)>{
                         '/': (context) => LoginRoute(),
-                        '/content': (context) => ContentRoute()
+                        '/content': (context) => ContentRoute(),
+                        '/forgotPassword': (context) => ForgotPasswordRoute(),
                       });
                 }
                 return Loading(snapshot);

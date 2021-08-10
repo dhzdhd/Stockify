@@ -100,9 +100,8 @@ class _MobileContentRoute extends StatelessWidget {
                         ),
                         onPressed: () async {
                           model.changePage(0);
-                          await Auth.signOut()
-                              ? Navigator.of(context).popAndPushNamed('/')
-                              : null;
+                          if (await Auth.signOut())
+                            Navigator.of(context).popAndPushNamed('/');
                         },
                       ),
                     ),
