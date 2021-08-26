@@ -3,17 +3,51 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stockify/models/profile.dart';
+import 'package:stockify/utilities.dart';
+
+final _titleTextStyle = TextStyle(
+  fontSize: 20,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+);
+final _subTextStyle = TextStyle(color: Colors.white54);
 
 class SettingsPage extends StatelessWidget {
-  final titleTextStyle = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.bold,
-    color: Colors.black,
+  final themeDialog = SimpleDialog(
+    backgroundColor: Colors.white.withOpacity(0.2),
+    title: Text(
+      'Themes',
+      style: _titleTextStyle,
+    ),
+    children: [
+      SimpleDialogOption(
+        onPressed: () => print(''),
+        child: Text('Blue'),
+      ),
+      SimpleDialogOption(
+        onPressed: () => print(''),
+        child: Text('Dark'),
+      ),
+    ],
   );
 
-  final textStyle = TextStyle(color: Colors.black);
-
-  SettingsPage();
+  final helpDialog = SimpleDialog(
+    backgroundColor: Colors.white.withOpacity(0.2),
+    title: Text(
+      'Help',
+      style: _titleTextStyle,
+    ),
+    children: [
+      ListTile(
+        title: Padding(
+          padding: EdgeInsets.only(right: 10, left: 10),
+          child: Text(
+            'About developer: \nContact: dhzdhd#2244 on discord',
+          ),
+        ),
+      )
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -22,94 +56,53 @@ class SettingsPage extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return Consumer<ProfileModel>(builder: (context, model, child) {
-            return SimpleDialog(
-              title: Padding(
-                padding: EdgeInsets.only(bottom: 15),
-                child: Text(
-                  'Profile',
-                  style: titleTextStyle,
+            return Utilities.blurify(
+              child: SimpleDialog(
+                backgroundColor: Colors.white.withOpacity(0.2),
+                title: Padding(
+                  padding: EdgeInsets.only(bottom: 15),
+                  child: Text(
+                    'Profile',
+                    style: _titleTextStyle,
+                  ),
                 ),
+                children: [
+                  ListTile(
+                    title: Text('Email: '),
+                    subtitle: Text(
+                      model.profileUser?.email ?? 'Error',
+                      style: _subTextStyle,
+                    ),
+                  ),
+                  Divider(),
+                  ListTile(
+                    title: Text('ID: '),
+                    subtitle: Text(
+                      model.profileUser?.id ?? 'Error',
+                      style: _subTextStyle,
+                    ),
+                  ),
+                  Divider(),
+                  ListTile(
+                    title: Text('Created on: '),
+                    subtitle: Text(
+                      model.profileUser?.createdAt.substring(0, 10) ?? 'Error',
+                      style: _subTextStyle,
+                    ),
+                  ),
+                  Divider(),
+                  ListTile(
+                    title: Text('Last signed in on: '),
+                    subtitle: Text(
+                      model.profileUser?.lastSignInAt?.substring(0, 10) ??
+                          'Error',
+                      style: _subTextStyle,
+                    ),
+                  ),
+                ],
               ),
-              children: [
-                ListTile(
-                  title: Text('Email: ', style: textStyle),
-                  subtitle: Text(model.profileUser?.email ?? 'Error',
-                      style: textStyle),
-                ),
-                Divider(),
-                ListTile(
-                  title: Text('ID: ', style: textStyle),
-                  subtitle: Text(
-                    model.profileUser?.id ?? 'Error',
-                    style: textStyle,
-                  ),
-                ),
-                Divider(),
-                ListTile(
-                  title: Text('Created on: ', style: textStyle),
-                  subtitle: Text(
-                    model.profileUser?.createdAt.substring(0, 10) ?? 'Error',
-                    style: textStyle,
-                  ),
-                ),
-                Divider(),
-                ListTile(
-                  title: Text('Last signed in on: ', style: textStyle),
-                  subtitle: Text(
-                    model.profileUser?.lastSignInAt?.substring(0, 10) ?? 'None',
-                    style: textStyle,
-                  ),
-                ),
-              ],
             );
           });
-        },
-      );
-    }
-
-    void themeDialog() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text(
-              'Themes',
-              style: titleTextStyle,
-            ),
-            children: [
-              SimpleDialogOption(
-                onPressed: () => print(''),
-                child: Text('Blue'),
-              ),
-              SimpleDialogOption(
-                onPressed: () => print(''),
-                child: Text('Dark'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-
-    void helpDialog() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text(
-              'Help',
-              style: titleTextStyle,
-            ),
-            children: [
-              Padding(
-                padding: EdgeInsets.only(right: 10, left: 10),
-                child: Text(
-                  'About developer: \nContact: dhzdhd#2244 on discord',
-                  style: textStyle,
-                ),
-              )
-            ],
-          );
         },
       );
     }
@@ -118,20 +111,26 @@ class SettingsPage extends StatelessWidget {
       child: ListView(
         children: [
           ListTile(
-            leading: Icon(
-              Icons.person,
-              color: Colors.white,
-            ),
-            title: Text('Profile'),
-            onTap: () => profileDialog(),
-          ),
+              leading: Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
+              title: Text('Profile'),
+              onTap: () => profileDialog()),
           ListTile(
             leading: Icon(
               Icons.palette,
               color: Colors.white,
             ),
             title: Text('Theme'),
-            onTap: () => themeDialog(),
+            onTap: () => {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Utilities.blurify(child: themeDialog);
+                },
+              )
+            },
           ),
           ListTile(
             leading: Icon(
@@ -139,7 +138,14 @@ class SettingsPage extends StatelessWidget {
               color: Colors.white,
             ),
             title: Text('Help'),
-            onTap: () => helpDialog(),
+            onTap: () => {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Utilities.blurify(child: helpDialog);
+                },
+              )
+            },
           ),
         ],
       ),

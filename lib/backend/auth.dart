@@ -17,7 +17,6 @@ class Auth {
   Future<bool> signUp() async {
     final response = await supabaseClient.auth.signUp(email, password);
     if (response.error != null) {
-      print(response.error?.message);
       return false;
     } else {
       final user = response.user;
@@ -31,7 +30,6 @@ class Auth {
     final response =
         await supabaseClient.auth.signIn(email: email, password: password);
     if (response.error != null) {
-      print(response.error?.message);
       return false;
     } else {
       final user = response.user;
@@ -44,7 +42,6 @@ class Auth {
   static Future<bool> signOut() async {
     final response = await supabaseClient.auth.signOut();
     if (response.error != null) {
-      print(response.error.toString());
       return false;
     } else {
       ProfileModel().update(user: null);
@@ -52,8 +49,11 @@ class Auth {
     }
   }
 
-  static Future<bool> forgotPassword(String password) async {
-    await supabaseClient.auth.update(UserAttributes(password: password));
+  static Future<bool> forgotPassword(String email) async {
+    final response = await supabaseClient.auth.api.resetPasswordForEmail(email);
+    if (response.error != null) {
+      return false;
+    }
     return true;
   }
 }

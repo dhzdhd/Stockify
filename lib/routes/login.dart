@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:stockify/backend/store.dart';
 import 'package:stockify/models/login_signup.dart';
 import 'package:stockify/models/profile.dart';
-import 'package:stockify/widgets/login_button.dart';
+import 'package:stockify/widgets/custom_button.dart';
 
 import '../widgets/login_field.dart';
 import '../backend/auth.dart';
@@ -43,14 +43,9 @@ class MobileLoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        ClipRRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
-            child: SvgPicture.asset(
-              mobileLoginSvgPath,
-              fit: BoxFit.fill,
-            ),
-          ),
+        SvgPicture.asset(
+          mobileLoginSvgPath,
+          fit: BoxFit.cover,
         ),
         Container(
           decoration: BoxDecoration(color: Colors.transparent),
@@ -235,7 +230,7 @@ class FieldContainerState extends State<FieldContainer> {
             Navigator.of(context).popAndPushNamed('/content');
           } else {
             ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
-              text: "Username/password incorrectly entered!",
+              text: "Email/password incorrectly entered!",
             ));
           }
         } else {
@@ -265,6 +260,8 @@ class FieldContainerState extends State<FieldContainer> {
                     .storeData(email: email, password: password)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                       errorSnackBar(text: "Data could not be stored locally"));
+                } else {
+                  emailDialog();
                 }
               }
               emailDialog();
@@ -326,7 +323,7 @@ class FieldContainerState extends State<FieldContainer> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      LoginButton(
+                      CustomButton(
                         text: model.model ? 'Login' : 'Sign Up',
                         func: model.model
                             ? () async {

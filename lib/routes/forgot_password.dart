@@ -1,37 +1,50 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:stockify/backend/auth.dart';
 import 'package:stockify/constants.dart';
 import 'package:stockify/routes/login.dart';
-import 'package:stockify/widgets/login_button.dart';
+import 'package:stockify/utilities.dart';
+import 'package:stockify/widgets/custom_button.dart';
 import 'package:stockify/widgets/login_field.dart';
 
 const String mobileLoginSvgPath = 'lib/assets/svg/mobile_login.svg';
 
-/// FIXME:
 class ForgotPasswordRoute extends StatelessWidget {
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final checkDialog = Utilities.blurify(
+    child: AlertDialog(
+        title: Text(
+      'Check your email for password reset instructions!',
+      style: TextStyle(color: Colors.black),
+    )),
+  );
 
   Widget build(BuildContext context) {
     Future updateConstraint() async {
-      String password = _passwordController.text;
-      String confirm = _confirmController.text;
+      String email = _emailController.text;
+      final RegExp regExp = RegExp("\\.com|@");
 
-      if (confirm.isNotEmpty && password.isNotEmpty) {
-        if (password == confirm) {
-          await Auth.forgotPassword(password);
+      if (email.isNotEmpty) {
+        if (email.contains(regExp)) {
+          if (await Auth.forgotPassword(email)) {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return checkDialog;
+                });
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
+              text: "Failed to reset password!",
+            ));
+          }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
-            text: "Password and confirm password fields are not the same!",
+            text: "Not a valid email!",
           ));
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(errorSnackBar(
-          text: "Field(s) cannot be empty!",
+          text: "Field cannot be empty!",
         ));
       }
     }
@@ -75,22 +88,14 @@ class ForgotPasswordRoute extends StatelessWidget {
                               padding:
                                   EdgeInsets.only(top: 60, left: 10, right: 10),
                               child: LoginField(
-                                text: 'New password',
+                                text: 'Email',
                                 hidden: false,
-                                controller: _passwordController,
-                              )),
-                          Padding(
-                              padding:
-                                  EdgeInsets.only(top: 20, left: 10, right: 10),
-                              child: LoginField(
-                                text: 'Confirm password',
-                                hidden: false,
-                                controller: _confirmController,
+                                controller: _emailController,
                               )),
                           Padding(
                               padding: EdgeInsets.only(top: 60),
-                              child: LoginButton(
-                                  text: 'Update',
+                              child: CustomButton(
+                                  text: 'Reset',
                                   func: () async {
                                     updateConstraint();
                                   })),

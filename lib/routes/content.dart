@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:stockify/backend/auth.dart';
 import 'package:stockify/models/nav_bar.dart';
+import 'package:stockify/utilities.dart';
+import 'package:stockify/widgets/custom_button.dart';
 
 import 'pages/home.dart';
 import 'pages/settings.dart';
@@ -64,6 +66,40 @@ class _DesktopContentRoute extends StatelessWidget {
 class _MobileContentRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Widget returnDialog(NavBarModel model) {
+      return Utilities.blurify(
+        child: SimpleDialog(
+          backgroundColor: Colors.white.withOpacity(0.2),
+          title: Center(
+              child: Text(
+            'Return to login screen?',
+            style: TextStyle(color: Colors.white),
+          )),
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 50, right: 50, top: 5),
+              child: CustomButton(
+                text: 'Yes',
+                func: () async {
+                  model.changePage(0);
+                  if (await Auth.signOut())
+                    Navigator.of(context).popAndPushNamed('/');
+                },
+              ),
+            ),
+            Padding(
+              padding:
+                  EdgeInsets.only(left: 50, right: 50, top: 10, bottom: 10),
+              child: CustomButton(
+                text: 'No',
+                func: () => Navigator.of(context).pop(),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Consumer<NavBarModel>(builder: (context, model, child) {
       return Scaffold(
         extendBodyBehindAppBar: true,
@@ -99,9 +135,11 @@ class _MobileContentRoute extends StatelessWidget {
                           size: 30,
                         ),
                         onPressed: () async {
-                          model.changePage(0);
-                          if (await Auth.signOut())
-                            Navigator.of(context).popAndPushNamed('/');
+                          await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return returnDialog(model);
+                              });
                         },
                       ),
                     ),
